@@ -1,0 +1,30 @@
+# For local testing. On Railway you deploy via the Dockerfile directly.
+version: "3.8"
+
+services:
+  phoenix-proxy:
+    build: .
+    container_name: phoenix-proxy
+    restart: unless-stopped
+    ports:
+      - "443:443"     # MTProto proxy
+      - "8080:8080"   # Admin panel
+    environment:
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-change_me_now}
+      - PROXY_PORT=443
+      - PANEL_PORT=8080
+      - FAKE_TLS_ENABLED=true
+      - FAKE_TLS_SNI=google.com
+      - SECRET_MODE=ee
+      - MAX_CONNECTIONS=1000
+      - TAG=${TAG:-}
+      - BOT_TOKEN=${BOT_TOKEN:-}
+      - ADMIN_CHAT_ID=${ADMIN_CHAT_ID:-}
+      - LOG_LEVEL=INFO
+      - DATABASE_PATH=/data/phoenix.db
+      - BACKUP_DIR=/data/backups
+    volumes:
+      - phoenix-data:/data
+
+volumes:
+  phoenix-data:
